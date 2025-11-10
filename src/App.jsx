@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useMemo, useEffect } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Menu, X, ArrowRight, Mail, Linkedin, ExternalLink, ArrowDown } from 'lucide-react'
 import Spline from '@splinetool/react-spline'
 
@@ -19,6 +19,32 @@ function useScrollTo() {
   }
 }
 
+function AnimatedBackground() {
+  // Soft aurora blobs
+  return (
+    <div className="absolute inset-0 -z-10 overflow-hidden">
+      <motion.div
+        className="absolute -top-32 -left-32 w-[40rem] h-[40rem] rounded-full blur-[100px]"
+        style={{ background: 'radial-gradient(closest-side, rgba(99,102,241,0.35), transparent)' }}
+        animate={{ x: [0, 40, -20, 0], y: [0, -20, 30, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute -bottom-40 -right-20 w-[38rem] h-[38rem] rounded-full blur-[110px]"
+        style={{ background: 'radial-gradient(closest-side, rgba(56,189,248,0.35), transparent)' }}
+        animate={{ x: [0, -30, 10, 0], y: [0, 25, -20, 0] }}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] rounded-full blur-[120px]"
+        style={{ background: 'radial-gradient(closest-side, rgba(236,72,153,0.28), transparent)' }}
+        animate={{ scale: [1, 1.1, 0.95, 1] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </div>
+  )
+}
+
 function Navbar() {
   const [open, setOpen] = React.useState(false)
   const scrollTo = useScrollTo()
@@ -26,10 +52,10 @@ function Navbar() {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="mt-4 backdrop-blur-xl bg-black/50 border border-white/10 rounded-2xl shadow-lg">
+        <div className="mt-4 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-lg">
           <div className="flex items-center justify-between px-4 py-3">
             <button onClick={() => scrollTo('home')} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-yellow-400" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-400 via-fuchsia-500 to-indigo-500" />
               <span className="text-white font-semibold tracking-wide">Kishan Parvadiya</span>
             </button>
 
@@ -38,7 +64,7 @@ function Navbar() {
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  className="text-sm text-white/80 hover:text-yellow-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   {item.label}
                 </button>
@@ -47,7 +73,7 @@ function Navbar() {
                 href="https://www.linkedin.com/in/kishan-parvadiya-593120268"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 text-black bg-yellow-400 hover:bg-yellow-300 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+                className="inline-flex items-center gap-2 text-black bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 hover:from-cyan-300 hover:via-fuchsia-400 hover:to-indigo-400 px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-lg"
               >
                 <Linkedin size={18} /> Connect
               </a>
@@ -74,7 +100,7 @@ function Navbar() {
                         setOpen(false)
                         scrollTo(item.id)
                       }}
-                      className="text-left text-white/90 hover:text-yellow-400 py-2"
+                      className="text-left text-white/90 hover:text-white py-2"
                     >
                       {item.label}
                     </button>
@@ -83,7 +109,7 @@ function Navbar() {
                     href="https://www.linkedin.com/in/kishan-parvadiya-593120268"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 text-black bg-yellow-400 hover:bg-yellow-300 px-4 py-2 rounded-full text-sm font-semibold w-max"
+                    className="inline-flex items-center gap-2 text-black bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 hover:from-cyan-300 hover:via-fuchsia-400 hover:to-indigo-400 px-4 py-2 rounded-full text-sm font-semibold w-max shadow-lg"
                   >
                     <Linkedin size={18} /> Connect
                   </a>
@@ -99,23 +125,28 @@ function Navbar() {
 
 function Hero() {
   const scrollTo = useScrollTo()
+  const { scrollY } = useScroll()
+  const y = useTransform(scrollY, [0, 400], [0, 60])
+  const opacity = useTransform(scrollY, [0, 250], [1, 0.6])
 
   return (
-    <section id="home" className="relative min-h-[90vh] w-full bg-black text-white overflow-hidden">
-      <div className="absolute inset-0">
+    <section id="home" className="relative min-h-[90vh] w-full bg-[#0B0B10] text-white overflow-hidden">
+      <AnimatedBackground />
+
+      <div className="absolute inset-0 opacity-30">
         <Spline scene="https://prod.spline.design/VJLoxp84lCdVfdZu/scene.splinecode" style={{ width: '100%', height: '100%' }} />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/60 to-black/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B10]/60 via-[#0B0B10]/70 to-[#0B0B10]/90 pointer-events-none" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-40 pb-24">
+      <motion.div style={{ y, opacity }} className="relative z-10 max-w-6xl mx-auto px-6 pt-40 pb-24">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-yellow-400 font-semibold tracking-wide"
+          className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 font-semibold tracking-wide"
         >
-          Product Designer & Aspiring Product Manager
+          Product Designer • Data + Design
         </motion.p>
 
         <motion.h1
@@ -133,7 +164,7 @@ function Hero() {
           transition={{ delay: 0.3 }}
           className="mt-6 max-w-2xl text-white/80"
         >
-          I’m a Data Science Engineering student passionate about crafting intuitive, user-centered digital products that balance design elegance with functional strength.
+          I craft intuitive experiences where aesthetics meet measurable impact. Human-centered, data-informed, and movement-led.
         </motion.p>
 
         <motion.div
@@ -144,7 +175,7 @@ function Hero() {
         >
           <button
             onClick={() => scrollTo('projects')}
-            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-6 py-3 rounded-full transition-colors"
+            className="inline-flex items-center gap-2 text-black bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 hover:from-cyan-300 hover:via-fuchsia-400 hover:to-indigo-400 font-semibold px-6 py-3 rounded-full transition-all shadow-lg"
           >
             View My Work <ArrowRight size={18} />
           </button>
@@ -152,7 +183,7 @@ function Hero() {
             href="https://www.linkedin.com/in/kishan-parvadiya-593120268"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-white hover:text-yellow-300"
+            className="inline-flex items-center gap-2 text-white/90 hover:text-white"
           >
             <Linkedin size={18} /> LinkedIn
           </a>
@@ -167,15 +198,17 @@ function Hero() {
           <ArrowDown className="animate-bounce" size={18} />
           <span>Scroll to explore</span>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }
 
-function Section({ id, title, children, bg = 'bg-black', tint = false }) {
+function Section({ id, title, children, bg = 'bg-[#0B0B10]', tint = false }) {
   return (
-    <section id={id} className={`${bg} ${tint ? 'bg-gradient-to-b from-black to-black/95' : ''} text-white py-20` }>
-      <div className="max-w-6xl mx-auto px-6">
+    <section id={id} className={`${bg} ${tint ? 'bg-gradient-to-b from-[#0B0B10] to-[#0B0B10]/95' : ''} text-white py-20 relative overflow-hidden`}>
+      <div className="pointer-events-none absolute inset-0 opacity-[0.08]"
+           style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #60A5FA 0, transparent 40%), radial-gradient(circle at 80% 30%, #A78BFA 0, transparent 35%), radial-gradient(circle at 40% 80%, #22D3EE 0, transparent 35%)' }} />
+      <div className="relative max-w-6xl mx-auto px-6">
         <motion.h2
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -194,7 +227,7 @@ function Section({ id, title, children, bg = 'bg-black', tint = false }) {
 
 function About() {
   return (
-    <Section id="about" title="About" bg="bg-black">
+    <Section id="about" title="About">
       <div className="grid md:grid-cols-3 gap-8 items-start">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -253,7 +286,7 @@ function Experience() {
   ]), [])
 
   return (
-    <Section id="experience" title="Experience" bg="bg-black">
+    <Section id="experience" title="Experience">
       <div className="grid gap-6">
         {items.map((item, i) => (
           <motion.div
@@ -266,7 +299,7 @@ function Experience() {
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <div>
-                <div className="text-yellow-400 font-semibold">{item.role}</div>
+                <div className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 font-semibold">{item.role}</div>
                 <div className="text-white text-lg">{item.org}</div>
               </div>
               <div className="text-white/60 text-sm">{item.period}</div>
@@ -299,7 +332,7 @@ function Projects() {
   ]
 
   return (
-    <Section id="projects" title="Projects" bg="bg-black">
+    <Section id="projects" title="Projects">
       <div className="grid md:grid-cols-3 gap-6">
         {projects.map((p, i) => (
           <motion.a
@@ -315,9 +348,10 @@ function Projects() {
           >
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">{p.title}</h3>
-              <ExternalLink className="text-white/40 group-hover:text-yellow-400 transition-colors" size={18} />
+              <ExternalLink className="text-white/40 group-hover:text-white transition-colors" size={18} />
             </div>
             <p className="mt-3 text-white/80 text-sm leading-relaxed">{p.desc}</p>
+            <div className="mt-4 h-px w-full bg-gradient-to-r from-transparent via-fuchsia-500/50 to-transparent" />
           </motion.a>
         ))}
       </div>
@@ -350,7 +384,7 @@ function Skills() {
   ]
 
   return (
-    <Section id="skills" title="Skills" bg="bg-black">
+    <Section id="skills" title="Skills">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {groups.map((g) => (
           <motion.div
@@ -360,10 +394,10 @@ function Skills() {
             viewport={{ once: true }}
             className="p-6 rounded-2xl border border-white/10 bg-white/5"
           >
-            <div className="text-yellow-400 font-semibold">{g.title}</div>
+            <div className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 font-semibold">{g.title}</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {g.items.map((it) => (
-                <span key={it} className="px-3 py-1 rounded-full bg-yellow-400/10 text-yellow-300 text-sm border border-yellow-400/20">
+                <span key={it} className="px-3 py-1 rounded-full bg-white/5 text-white text-sm border border-white/10">
                   {it}
                 </span>
               ))}
@@ -390,7 +424,7 @@ function Contact() {
   }
 
   return (
-    <Section id="contact" title="Contact" bg="bg-black" tint>
+    <Section id="contact" title="Contact" tint>
       <div className="grid md:grid-cols-2 gap-10">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -402,10 +436,10 @@ function Contact() {
           </p>
 
           <div className="mt-6 flex flex-col gap-3">
-            <a href="mailto:kishanpatel486630@gmail.com" className="inline-flex items-center gap-2 text-white/90 hover:text-yellow-300 transition-colors">
+            <a href="mailto:kishanpatel486630@gmail.com" className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors">
               <Mail size={18} /> kishanpatel486630@gmail.com
             </a>
-            <a href="https://www.linkedin.com/in/kishan-parvadiya-593120268" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white/90 hover:text-yellow-300 transition-colors">
+            <a href="https://www.linkedin.com/in/kishan-parvadiya-593120268" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors">
               <Linkedin size={18} /> LinkedIn
             </a>
           </div>
@@ -421,17 +455,17 @@ function Contact() {
           <div className="grid gap-4">
             <div>
               <label className="block text-sm text-white/70 mb-1">Name</label>
-              <input name="name" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Your name" />
+              <input name="name" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Your name" />
             </div>
             <div>
               <label className="block text-sm text-white/70 mb-1">Email</label>
-              <input type="email" name="email" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="you@example.com" />
+              <input type="email" name="email" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="you@example.com" />
             </div>
             <div>
               <label className="block text-sm text-white/70 mb-1">Message</label>
-              <textarea name="message" rows="5" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Tell me about your project or opportunity" />
+              <textarea name="message" rows="5" required className="w-full px-4 py-2 rounded-md bg-black/60 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Tell me about your project or opportunity" />
             </div>
-            <button type="submit" className="inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-6 py-3 rounded-full transition-colors">
+            <button type="submit" className="inline-flex items-center justify-center gap-2 text-black bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-indigo-500 hover:from-cyan-300 hover:via-fuchsia-400 hover:to-indigo-400 font-semibold px-6 py-3 rounded-full transition-all shadow-lg">
               Send Message <ArrowRight size={18} />
             </button>
           </div>
@@ -443,12 +477,12 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10">
+    <footer className="bg-[#0B0B10] border-t border-white/10">
       <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-white/70 text-sm">
         <div>© {new Date().getFullYear()} Kishan Parvadiya. All rights reserved.</div>
         <div className="flex items-center gap-4">
-          <a href="mailto:kishanpatel486630@gmail.com" className="hover:text-yellow-300">Email</a>
-          <a href="https://www.linkedin.com/in/kishan-parvadiya-593120268" target="_blank" rel="noreferrer" className="hover:text-yellow-300">LinkedIn</a>
+          <a href="mailto:kishanpatel486630@gmail.com" className="hover:text-white">Email</a>
+          <a href="https://www.linkedin.com/in/kishan-parvadiya-593120268" target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn</a>
         </div>
       </div>
     </footer>
@@ -456,8 +490,10 @@ function Footer() {
 }
 
 export default function App() {
+  // Prevent FOUC for animated bg on mount
+  useEffect(() => {}, [])
   return (
-    <div className="min-h-screen bg-black text-white font-[Inter]">
+    <div className="min-h-screen bg-[#0B0B10] text-white font-[Inter]">
       <Navbar />
       <Hero />
       <About />
